@@ -1,2 +1,264 @@
 Weather forecasting is the task of predicting weather conditions for a particular location and time. using data and algorithms
 Weather, it is possible to forecast the weather for n days ahead
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import pandas as pd
+import numpy as np
+import plotly.express as py 
+import plotly.graph_objects as go 
+
+data = pd.read_csv("Salary_Data.csv")
+print(data)
+
+
+# In[2]:
+
+
+print(data.isnull().sum())
+
+
+# In[3]:
+
+
+figure = py.scatter(data  frame = data ,
+                    x="Salary,"
+                    y="YearsExperience ,"
+                    size="YearsExperience ,"
+                    trendline="ols")
+figure.show()
+
+
+# In[ ]:
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+
+# In[ ]:
+
+
+x = np.asanyarray(data[["YearsExperience"]])
+y = np.asanyarray(data[["Salary"]])
+xtrain , xtest , ytrain ,ytest = train_test_split(x , y , test_size=0.2 , random_state=42)
+
+
+# In[ ]:
+
+
+model = LinearRegression()
+model.fit(xtrain , ytrain)
+
+
+# In[ ]:
+
+
+a = float(input("Years of Experience  : "))
+features = np.array([[a]])
+print("predicted Salary=", model.predict(features))
+
+
+# In[ ]:
+
+
+import pandas as pd 
+import numpy as np
+from sklearn import cluster
+data = pd.read_csv("CC GENERAL.csv")
+print(data)
+
+
+# In[ ]:
+
+
+data.isnull().sum()
+
+
+# In[ ]:
+
+
+data = data.dropna()
+
+
+# In[ ]:
+
+
+clustering_data = data[["BALANCE" ,"PURCHASES" ,"CREDIT LIMIT"]]
+from sklearn.preprocessing import MinMaxScaler
+for i in clustering_data.columns:
+    MinMaxScaler(i)   
+from sklearn.cluster import KMeans
+kmeans = KMeans('n clusters=5')
+clusters = kmeans.fit_predict(clustering_data)
+data["CREDIT_CARD_SEGMENTS"]= clusters
+
+
+# In[ ]:
+
+
+data["CREDIT_CARD_SEGMENTS"] =data["CREDIT_CARD_SEGMENTS"].map({0:"Cluster 1",1:"Cluster 2",2:"Cluster 3",3:"Cluster 4",4:"Cluster 5"})
+                                                    
+print(data["CREDIT_CARD_SEGMENTS"].head(10))
+
+
+# In[11]:
+
+
+import pandas as pd 
+import numpy as np 
+import matplotlib.pyplot as plt 
+import seaborn as sns 
+import plotly.express as px
+
+data = pd.read_csv("DailyDelhiClimateTrain.csv") 
+print(data)
+
+
+# In[12]:
+
+
+data = pd.read_csv("DailyDelhiClimateTrain.csv") 
+print(data)
+
+
+# In[13]:
+
+
+print(data.describe())
+
+
+# In[14]:
+
+
+print(data.info())
+
+
+# In[15]:
+
+
+figure = px.line(data, x="date", y="meantemp", title='Mean Temperature in Delhi Over the Years') 
+figure.show()
+
+
+# In[31]:
+
+
+figure = px.line(data , x="date",y= "humidity", title='Humidity in Delhi Over the Years')
+figure.show()
+
+
+# In[38]:
+
+
+figure = px.line(data ,x="date" ,y="wind_speed",title='Wind Speed in Delhi Over the Years')
+figure.show()                 
+
+
+# In[39]:
+
+
+figure = px.scatter(data_frame = data, x="humidity",y="meantemp", size="meantemp",trendline="ols",title = 'Relationship Between Temperature and Humidity')
+figure.show()
+
+
+# In[80]:
+
+
+data["date"] = pd.to_datetime(data["date"],format = "%Y-%m-%d") 
+data["year"] = data["date"].dt.year 
+data["month"] = data["date"].dt.month 
+print(data)
+
+
+# In[81]:
+
+
+plt.style.use('fivethirtyeight') 
+plt.figure(figsize=(15, 10)) 
+plt.title('Temperature Change in Delhi Over the Years') 
+sns.lineplot(data= data, x= "month",y= "meantemp", hue="year") 
+plt.show()
+
+
+# In[82]:
+
+
+plt.style.use('fivethirtyeight') 
+plt.figure(figsize=(15, 10)) 
+plt.title("Temperature Change in Delhi Over the Years") 
+sns.lineplot(data = data, x="month", y="meantemp", hue="year") 
+plt.show()
+
+
+# In[83]:
+
+
+forecast_data = data.rename(columns = {"date": "ds "," meantemp": "y"}) 
+print(forecast_data)
+
+
+# In[86]:
+
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import matplotlib.pyplot as plt
+
+
+# In[89]:
+
+
+from sklearn.datasets import load_iris
+iris = load_iris()
+
+
+# In[91]:
+
+
+from sklearn.linear_model import LinearRegression
+
+
+# In[99]:
+
+
+from prophet import Prophet
+from prophet.plot import plot_plotly
+from prophet.plot import plot_components_plotly
+model = Prophet()
+#model.fit(forecast_data)
+#predictions = model.predict(forecast_data)
+#plot_plotly(model )
+
+
+# In[101]:
+
+
+from prophet import Prophet 
+from prophet.plot import plot_plotly, plot_components_plotly 
+model = Prophet()
+#model.fit(forecast_data)
+#model.fit(forecast_data) 
+forecasts = model.make_future_dataframe(periods=365) 
+#model.fit(forecast_data)
+predictions = model.predict(forecasts) 
+plot_plotly(model, predictions)
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
