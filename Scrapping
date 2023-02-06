@@ -1,0 +1,467 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# Web scrapping: 
+# 
+# 1- Beautifulsoup <br>
+# 2- Requests ( api --> request )  <br>
+# 3- Selunim ( automatic scrapping ) <br>
+# 4- Cron jobs: ( Automatic method ) <br>
+# 
+# 
+# Python --> 
+# Pip :  
+# Conda: 
+# 
+
+# **Web Track** <br>
+# frontend : Design  (html : hyper text markup langauage,css , js) <br>
+# backend : Database, server and operations
+
+# In[3]:
+
+
+import requests
+from bs4 import BeautifulSoup
+import csv
+
+
+# In[ ]:
+
+
+
+
+
+# In[4]:
+
+
+with open ('TextData/test.txt') as f: 
+    x = f.read()
+x
+
+
+# In[29]:
+
+
+with open ('simple.html') as html_file:
+    soup = BeautifulSoup(html_file, 'lxml') # parser, 
+    #parsing
+
+
+# In[7]:
+
+
+if 4  > 3:
+    print("Yes")
+
+
+# In[6]:
+
+
+soup
+
+
+# In[8]:
+
+
+print(soup.prettify())
+
+
+# In[13]:
+
+
+match = soup.title # print title tag 
+print(match)
+print(type(match))
+
+
+# In[12]:
+
+
+match = soup.title.text
+print(type(match))
+print(match)
+
+
+# In[17]:
+
+
+match = soup.div #  return the first div he can find
+print(match)
+print()
+print (type(match))
+
+
+# In[26]:
+
+
+match = soup.find('div') # also, it will return the first div it could find
+print(match)
+
+
+# In[ ]:
+
+
+
+
+
+# In[19]:
+
+
+match = soup.find('div', class_ = "footer")
+print(match)
+
+
+# In[33]:
+
+
+article = soup.find('div', {"id": "Ahmed", "class" : "article"})
+print(article)
+
+
+# In[45]:
+
+
+article = soup.find('div', class_ = "article")
+print(article)
+
+
+# In[46]:
+
+
+newheadline = article.h2.a.attrs["href"]
+newheadline
+
+
+# In[37]:
+
+
+headlinelink = article.h2.a
+print(headlinelink)
+
+
+# In[36]:
+
+
+headline = article.h2.a.text
+print(headline)
+
+
+# In[41]:
+
+
+summary = article.p.text
+print(summary)
+
+
+# In[47]:
+
+
+articles = soup.find_all('div', class_ = "article")
+for article in articles:
+    
+    headline = article.h2.a.text
+    print(headline)
+    
+    summary = article.p.text
+    print(summary)
+    
+    print('\n')
+
+
+# In[48]:
+
+
+sources = requests.get("http://coreyms.com").text
+sources
+# retirieve website html code ( i.e. syntax)
+
+
+# In[49]:
+
+
+soup = BeautifulSoup(sources , 'lxml')
+
+
+# In[50]:
+
+
+print(soup.prettify())
+
+
+# In[51]:
+
+
+article = soup.find('article') #tag which is called article , not the class article
+# find first parameter is tag name ex: div, imd, p, article
+print(article.prettify())
+
+
+# In[52]:
+
+
+headline = article.h2.a.text
+print(headline)
+
+
+# In[66]:
+
+
+headline = article.a.text
+print(headline)
+
+
+# In[67]:
+
+
+summary = article.find('div', class_ = "entry-content").p.text
+print(summary)
+
+
+# In[55]:
+
+
+vid = article.find('iframe', class_= "youtube-player")
+print(vid)
+
+
+# In[56]:
+
+
+type(vid)
+
+
+# In[58]:
+
+
+vid = article.find('iframe', class_= "youtube-player")['src']
+print(vid)
+print (type(vid))
+
+
+# In[59]:
+
+
+vid_id = vid.split('/')
+vid_id
+
+
+# In[60]:
+
+
+vid_id[4]
+
+
+# In[61]:
+
+
+video = vid_id[4].split('?')
+print(video)
+
+
+# In[62]:
+
+
+c = video[0]
+print(c)
+
+
+# In[63]:
+
+
+ytLink = f'https://youtube.com/watch?v={c}' # print format 
+print (ytLink)
+
+
+# In[64]:
+
+
+try :
+    vid = article.find('iframe', class_= "youtube-player")['src']
+    vid_id = vid.split('/')
+    video = vid_id[4].split('?')
+    c =video[0]
+    ytLink = f'https://youtube.com/watch?v={c}'
+except Exception as e:
+    print ("there was an error with the youtube link")
+
+    
+print(ytLink)
+    
+
+
+# word : doc , rtf <br>
+# xlsx : excel file extension ( can support multiple sheets ) <br> 
+# ( most common )csv : comma seperated values <br>
+# example : <br>
+# Ahmed,Mohamed,Ali,Mahmoud,Amr<br>
+# Ahmed,Mohamed,Ali,Mahmoud,Amr<br>
+# Ahmed,Mohamed,Ali,Mahmoud,Amr<br>
+# Ahmed,Mohamed,Ali,Mahmoud,Amr
+
+# In[68]:
+
+
+csvfile = open ('scrape.csv', 'w', encoding='utf-8') # w = write into the file , general way of representing data 
+writer = csv.writer(csvfile)
+writer.writerow(['headline', 'summary', 'link'])
+
+
+# In[69]:
+
+
+writer.writerow([headline, summary, ytLink])
+
+
+# In[70]:
+
+
+csvfile.close()
+
+
+# Task 1 : implement simple cronjob  application <br>
+# Task 2 : apply same method on 5 articles, save result in csv file <br> 
+# Task 3 : use selenium to open github delay 3 seconds , then click sign in 
+
+# In[ ]:
+
+
+
+
+
+# In[71]:
+
+
+from selenium import webdriver
+
+
+# In[72]:
+
+
+driver = webdriver.Firefox(executable_path=r"geckodriver.exe")
+
+
+# In[73]:
+
+
+driver.get("https://github.com")
+
+
+# 1- beautifulsoup ( bs4 )
+# 2- requests
+# 3- selenuim
+# 
+# 
+# package ( versions ) 
+# requests --> 3 beautiful soup 
+# 
+# 
+# force install 
+
+# In[ ]:
+
+
+Data Collection: 
+    
+scrapping, buy, request, create, serveys
+pip vs conda 
+install package 
+anaconda  prompt , jupyter 
+coreate new environment 
+
+web Scrapping: 
+    
+    API
+    beautiful soup 4 
+    requests 
+    selenuim 
+    csv ( already installed  )
+    parser
+    google trends, twitter 
+    html files  
+    html tags: 
+        
+        
+Mathematics : 
+    1- Statistics 
+    2- Probability 
+    3- Linear Algebra
+    4- Calculus 
+
+Data Science :
+    Numpy, pandas, matplotlib
+    Data Analysis
+    Data Visualization 
+    OpenCV ( Image processing , videos )
+    Audio Analysis 
+    
+    
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+source = requests.get('http://coreyms.com').text
+
+soup = BeautifulSoup(source, 'lxml')
+
+csv_file = open('cms_scrape.csv', 'w')
+
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(['headline', 'summary', 'video_link'])
+
+for article in soup.find_all('article'):
+    headline = article.h2.a.text
+    print(headline)
+
+    summary = article.find('div', class_='entry-content').p.text
+    print(summary)
+
+    try:
+        vid_src = article.find('iframe', class_='youtube-player')['src']
+
+        vid_id = vid_src.split('/')[4]
+        vid_id = vid_id.split('?')[0]
+
+        yt_link = f'https://youtube.com/watch?v={vid_id}'
+    except Exception as e:
+        yt_link = None
+
+    print(yt_link)
+
+    print()
+
+    csv_writer.writerow([headline, summary, yt_link])
+
+csv_file.close()
+
