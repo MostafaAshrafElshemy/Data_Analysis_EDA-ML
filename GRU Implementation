@@ -1,0 +1,229 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# ### GRU Implementation
+
+# In[1]:
+
+
+from tensorflow.keras.datasets import imdb #imdb dataset
+import tensorflow.keras as tfk
+from tensorflow.keras.layers import Dense, GRU , Flatten , LSTM
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding
+from tensorflow.keras.preprocessing import sequence
+
+
+# ### Imdb Dataset 
+# This is a dataset of 25,000 movies reviews from IMDB, labeled by sentiment (positive/negative). Reviews have been preprocessed, and each review is encoded as a list of word indexes (integers). For convenience, words are indexed by overall frequency in the dataset, so that for instance the integer "3" encodes the 3rd most frequent word in the data. This allows for quick filtering operations such as: "only consider the top 10,000 most common words, but eliminate the top 20 most common words".
+
+# In[2]:
+
+
+imdb.get_word_index()
+
+
+# In[3]:
+
+
+topwords = 5000 
+(xtrain , ytrain ), ( xtest , ytest ) = imdb.load_data(num_words=topwords)
+
+
+# In[4]:
+
+
+xtrain.shape # sentences : movie review 
+
+
+# In[5]:
+
+
+xtrain[0]
+
+
+# In[6]:
+
+
+maxwords = 500
+xtrain = sequence.pad_sequences(xtrain, maxlen=maxwords)
+xtest = sequence.pad_sequences(xtest, maxlen=maxwords)
+
+
+# In[7]:
+
+
+print(len(xtrain[0])) # the first review
+
+
+# In[11]:
+
+
+model = Sequential() # layer after layer after layer and so on 
+# model = functional() # layer, input ,layer, layer to input, layer to layer 2 
+model.add(Embedding(topwords, 100, input_length = maxwords))
+model.add(GRU(100))
+model.add(Dense(1, activation = "sigmoid")) #positive (1) negative (0)
+model.compile(loss="binary_crossentropy", optimizer = "adam", metrics=["accuracy"])
+print(model.summary())
+
+
+# In[13]:
+
+
+#wavenet 
+
+
+# In[12]:
+
+
+model.fit(xtrain,ytrain, epochs=5)
+
+
+# In[14]:
+
+
+scores = model.evaluate(xtest, ytest, verbose = 0 )
+print("Accuracy : %.2f%%" %(scores[1]*100))
+
+
+# In[17]:
+
+
+scores = newmodel.evaluate(xtest, ytest, verbose = 0 )
+print("Accuracy : %.2f%%" %(scores[1]*100))
+
+
+# Hyperparameters:
+# 
+# 1. Number of layers 
+# 2. Number of neurons per layer 
+# 3. Batch size
+# 4. Early stop 
+# 5. epochs
+
+# In[15]:
+
+
+from tensorflow.keras.preprocessing import sequence
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Embedding
+from tensorflow.keras.layers import LSTM
+from tensorflow.keras.datasets import imdb
+
+max_features = 500
+maxlen = 500  # cut texts after this number of words (among top max_features most common words)
+batch_size = 100
+
+
+(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=500)
+print(len(x_train), 'train sequences')
+print(len(x_test), 'test sequences')
+
+x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
+x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+print('x_train shape:', x_train.shape)
+print('x_test shape:', x_test.shape)
+
+
+model = Sequential()
+model.add(Embedding(max_features, 128))
+model.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
+model.add(Dense(1, activation='sigmoid'))
+
+# try using different optimizers and different optimizer configs
+model.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+print('Train...')
+model.fit(x_train, y_train,
+          batch_size=batch_size,
+          epochs=15,
+          validation_data=(x_test, y_test))
+score, acc = model.evaluate(x_test, y_test,
+                            batch_size=batch_size)
+print('Test score:', score)
+print('Test accuracy:', acc)
+
+
+# In[21]:
+
+
+max_features = 20000
+maxlen = 80  # cut texts after this number of words (among top max_features most common words)
+
+(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
+print(len(x_train), 'train sequences')
+print(len(x_test), 'test sequences')
+
+x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
+x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+print('x_train shape:', x_train.shape)
+print('x_test shape:', x_test.shape)
+
+
+newmodel = Sequential()
+newmodel.add(Embedding(max_features, 128))
+newmodel.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
+newmodel.add(Dense(1, activation='sigmoid'))
+
+# try using different optimizers and different optimizer configs
+newmodel.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+print('Train...')
+newmodel.fit(x_train, y_train,
+          epochs=15,
+          validation_data=(x_test, y_test))
+score, acc = model.evaluate(x_test, y_test,
+                            batch_size=batch_size)
+print('Test score:', score)
+print('Test accuracy:', acc)
+
+
+# In[ ]:
+
+
+max_features = 20000
+maxlen = 100  # cut texts after this number of words (among top max_features most common words)
+
+
+
+(x_train, y_train), (x_test, y_test) = imdb.load_data(num_words=max_features)
+print(len(x_train), 'train sequences')
+print(len(x_test), 'test sequences')
+
+x_train = sequence.pad_sequences(x_train, maxlen=maxlen)
+x_test = sequence.pad_sequences(x_test, maxlen=maxlen)
+print('x_train shape:', x_train.shape)
+print('x_test shape:', x_test.shape)
+
+
+newmodel = Sequential()
+newmodel.add(Embedding(max_features, 128))
+newmodel.add(LSTM(128, dropout=0.2, recurrent_dropout=0.2))
+newmodel.add(Dense(1, activation='sigmoid'))
+
+# try using different optimizers and different optimizer configs
+newmodel.compile(loss='binary_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+print('Train...')
+newmodel.fit(x_train, y_train,
+          epochs=15,
+          validation_data=(x_test, y_test))
+score, acc = model.evaluate(x_test, y_test,
+                            batch_size=batch_size)
+print('Test score:', score)
+print('Test accuracy:', acc)
+
+
+# In[ ]:
+
+
+import pandas as pd 
+df= pd.read_csv(".csv" , encoding = "utf-8")
+
