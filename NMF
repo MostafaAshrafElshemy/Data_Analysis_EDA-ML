@@ -1,0 +1,165 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import pandas as pd
+npr = pd.read_csv('npr.csv')
+npr.head()
+
+
+# In[2]:
+
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+tfidf = TfidfVectorizer(max_df=0.95, min_df=2, stop_words='english')
+dtm = tfidf.fit_transform(npr['Article'])
+
+
+# In[3]:
+
+
+from sklearn.decomposition import NMF
+nmf_model = NMF(n_components=7,random_state=42)
+nmf_model.fit(dtm)
+
+
+# In[4]:
+
+
+len(tfidf.get_feature_names())
+
+
+# In[5]:
+
+
+import random
+for i in range(10):
+    random_word_id = random.randint(0,54776)
+    print(tfidf.get_feature_names()[random_word_id])
+
+
+# In[6]:
+
+
+len(nmf_model.components_)
+
+
+# In[7]:
+
+
+nmf_model.components_
+
+len(nmf_model.components_[0])
+
+
+# In[8]:
+
+
+single_topic = nmf_model.components_[0]
+
+single_topic.argsort()
+
+
+# In[21]:
+
+
+len(single_topic)
+
+
+# In[9]:
+
+
+single_topic[18302]
+
+
+# In[10]:
+
+
+single_topic[42993]
+
+
+# In[11]:
+
+
+single_topic.argsort()[-10:]
+
+
+# In[12]:
+
+
+top_word_indices = single_topic.argsort()[-10:]
+
+for index in top_word_indices:
+    print(tfidf.get_feature_names()[index])
+
+
+# In[13]:
+
+
+for index,topic in enumerate(nmf_model.components_):
+    print(f'THE TOP 15 WORDS FOR TOPIC #{index}')
+    print([tfidf.get_feature_names()[i] for i in topic.argsort()[-15:]])
+    print('\n')
+
+dtm.shape
+
+
+# In[14]:
+
+
+len(npr)
+
+
+# In[15]:
+
+
+topic_results = nmf_model.transform(dtm)
+
+topic_results.shape
+
+
+# In[16]:
+
+
+topic_results[0].round(2)
+
+
+# In[17]:
+
+
+topic_results[0].argmax()
+
+
+# In[18]:
+
+
+npr.head()
+
+
+# In[19]:
+
+
+topic_results.argmax(axis=1)
+
+
+# In[20]:
+
+
+npr['Topic'] = topic_results.argmax(axis=1)
+
+
+
+topicdict  = {0:'health',1:'election',2:'legis',3:'policy',4:'candidates',5:'music',6:'educaion'}
+
+npr['Topic Label'] = npr['Topic'].map(topicdict)
+
+npr.head(10)
+
+
+# In[ ]:
+
+
+
+
